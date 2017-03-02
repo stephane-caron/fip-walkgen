@@ -1,4 +1,4 @@
-# Dynamic walking 
+# FIP Dynamic Walking
 
 Source code for https://hal.archives-ouvertes.fr/hal-01481052
 
@@ -22,7 +22,7 @@ linear-quadratic regulator that runs at 300 Hz. We finally demonstrate our
 solution in simulations with a model of the HRP-4 humanoid robot, including
 noise and delays over both state estimation and foot force control. 
 
-<img src="https://scaron.info/figures/dynamic-walking.png" height="350" />
+<img src="https://scaron.info/figures/dynamic-walking.png" height="400" />
 
 Authors:
 [Stéphane Caron](https://scaron.info) and
