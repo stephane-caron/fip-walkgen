@@ -1,0 +1,6 @@
+*.dae
+*.pyc
+*.pyo
+*~
+.ropeproject
+camera

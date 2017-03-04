@@ -1,0 +1,3 @@
+[submodule "pymanoid"]
+	path = pymanoid
+	url = https://github.com/stephane-caron/pymanoid.git
