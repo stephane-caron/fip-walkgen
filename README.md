@@ -28,6 +28,27 @@ Authors:
 [Stéphane Caron](https://scaron.info) and
 [Abderrahmane Kheddar](http://www.lirmm.fr/lirmm_eng/users/utilisateurs-lirmm/equipes/idh/abderrahmane-kheddar)
 
+## Installation
+
+On Ubuntu 14.04, once you have [installed
+OpenRAVE](https://scaron.info/teaching/installing-openrave-on-ubuntu-14.04.html),
+do:
+
+```bash
+sudo apt-get install cython python python-dev python-pip python-scipy python-shapely
+sudo pip install pycddlib quadprog pyclipper
+```
+
+Then, clone the repository and its submodule via:
+
+```bash
+git clone --recursive https://github.com/stephane-caron/dynamic-walking.git
+```
+
+If you already have [pymanoid](https://github.com/stephane-caron/pymanoid)
+installed on your system, be sure that its version matches that of the
+submodule.
+
 ## Questions?
 
 Feel free to post your questions or comments in the issue tracker.
