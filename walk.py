@@ -40,6 +40,7 @@ from pymanoid.tasks import MinCAMTask
 from wpg import WalkingPatternGenerator
 from wpg.fip_dynamics import FIP
 from wpg.scenarios import EllipticStaircase
+# from wpg.scenarios import HorizontalFloor
 from wpg.state_estimation import StateEstimator
 
 
@@ -105,10 +106,13 @@ class PreviewDrawer(pymanoid.Process):
         self.mpc_handle = None
         self.lqr_handle = None
         self.pendulum_handle = None
+        self.swing_handle = None
 
     def on_tick(self, sim):
         if not wpg.com_mpc.preview.is_empty:
             self.mpc_handle = wpg.com_mpc.preview.draw('b')
+        if not wpg.is_in_double_support:
+            self.swing_handle = wpg.swing_controller.draw()
         if not DISABLE_LQR and wpg.com_lqr is not None and \
                 wpg.com_lqr.preview is not None:
             self.lqr_handle = wpg.com_lqr.preview.draw('g')
@@ -282,6 +286,7 @@ if __name__ == "__main__":
     contact_feed = EllipticStaircase(
         robot, radius=1.4, angular_step=0.5, height=1.2, roughness=0.5,
         contact_model=contact_model, visible=True)
+    # contact_feed = HorizontalFloor(robot, 10, 0.6, 0.3, contact_model)
     generate_posture()
     pendulum = FIP(
         robot.mass, omega2=9.81 / robot.leg_length, com=robot.com,
