@@ -190,11 +190,11 @@ def update_robot_ik():
     robot.ik.add_task(DOFTask(robot, robot.CHEST_P, 0.2, weight=1e-4))
     robot.ik.add_task(DOFTask(robot, robot.CHEST_Y, 0., weight=1e-4))
     # prevent lateral arm collisions with the chest:
-    robot.ik.add_task(DOFTask(robot, robot.R_SHOULDER_R, -0.4, weight=1e-4))
-    robot.ik.add_task(DOFTask(robot, robot.L_SHOULDER_R, +0.4, weight=1e-4))
+    robot.ik.add_task(DOFTask(robot, robot.R_SHOULDER_R, -0.4))
+    robot.ik.add_task(DOFTask(robot, robot.L_SHOULDER_R, +0.4))
     # prevent arms from leaning backward:
-    robot.ik.add_task(DOFTask(robot, robot.L_SHOULDER_P, 0., weight=1e-4))
-    robot.ik.add_task(DOFTask(robot, robot.R_SHOULDER_P, 0., weight=1e-4))
+    robot.ik.add_task(DOFTask(robot, robot.L_SHOULDER_P, 0.))
+    robot.ik.add_task(DOFTask(robot, robot.R_SHOULDER_P, 0.))
     robot.ik.tasks[robot.left_foot.name.upper()].weight = 1.
     robot.ik.tasks[robot.right_foot.name.upper()].weight = 1.
     robot.ik.tasks['COM'].weight = 1e-2
@@ -203,15 +203,15 @@ def update_robot_ik():
     robot.ik.tasks[robot.chest_p_name.upper()].weight = 1e-4
     robot.ik.tasks[robot.chest_y_name.upper()].weight = 1e-4
     if '--shoulders' in sys.argv:
-        robot.ik.tasks['R_SHOULDER_R'].weight = 1e-4
-        robot.ik.tasks['L_SHOULDER_R'].weight = 1e-4
         robot.ik.tasks['L_SHOULDER_P'].weight = 1e-4
+        robot.ik.tasks['L_SHOULDER_R'].weight = 1e-4
         robot.ik.tasks['R_SHOULDER_P'].weight = 1e-4
+        robot.ik.tasks['R_SHOULDER_R'].weight = 1e-4
     else:  # don't fix shoulders by default
-        robot.ik.tasks['R_SHOULDER_R'].weight = 1e-5
-        robot.ik.tasks['L_SHOULDER_R'].weight = 1e-5
         robot.ik.tasks['L_SHOULDER_P'].weight = 1e-5
+        robot.ik.tasks['L_SHOULDER_R'].weight = 1e-5
         robot.ik.tasks['R_SHOULDER_P'].weight = 1e-5
+        robot.ik.tasks['R_SHOULDER_R'].weight = 1e-5
     robot.ik.tasks['POSTURE'].weight = 1e-5
 
 
