@@ -30,13 +30,29 @@ Authors:
 
 ## Installation
 
-On Ubuntu 14.04, once you have [installed
-OpenRAVE](https://scaron.info/teaching/installing-openrave-on-ubuntu-14.04.html),
-do:
+The following instructions were verified for Ubuntu 14.04.
 
+- [Install OpenRAVE](https://scaron.info/teaching/installing-openrave-on-ubuntu-14.04.html) (see also [instructions for Ubuntu 16.04](https://scaron.info/teaching/installing-openrave-on-ubuntu-16.04.html))
+- Install Python and related dependencies from the package manager:
 ```bash
 sudo apt-get install cython python python-dev python-pip python-scipy python-shapely
+```
+- Install the following Python packages:
+```bash
 sudo pip install pycddlib quadprog pyclipper
+```
+- Install [CasADi](http://casadi.org). Pre-compiled binaries are available, but
+  I recommend you [build it from
+  source](https://github.com/casadi/casadi/wiki/InstallationLinux). When
+  installing IPOPT, make sure to install the MA27 linear solver
+  (``ThirdParty/HSL`` folder).
+
+- Install [TOPP](https://github.com/quangounet/TOPP.git):
+```bash
+git clone https://github.com/quangounet/TOPP.git
+cd TOPP && mkdir build && cd build
+cmake ..
+sudo make install
 ```
 
 Then, clone the repository and its submodule via:
@@ -46,7 +62,7 @@ git clone --recursive https://github.com/stephane-caron/dynamic-walking.git
 ```
 
 If you already have [pymanoid](https://github.com/stephane-caron/pymanoid)
-installed on your system, be sure that its version matches that of the
+installed on your system, make sure that its version matches that of the
 submodule.
 
 ## Questions?
