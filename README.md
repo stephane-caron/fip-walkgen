@@ -30,9 +30,10 @@ Authors:
 
 ## Installation
 
-The following instructions were verified for Ubuntu 14.04.
+The following instructions were verified on various machines running Ubuntu
+14.04 and 16.04.
 
-- [Install OpenRAVE](https://scaron.info/teaching/installing-openrave-on-ubuntu-14.04.html) (see also [instructions for Ubuntu 16.04](https://scaron.info/teaching/installing-openrave-on-ubuntu-16.04.html))
+- Install OpenRAVE: here are [instructions for Ubuntu 14.04](https://scaron.info/teaching/installing-openrave-on-ubuntu-14.04.html) as well as [for Ubuntu 16.04](https://scaron.info/teaching/installing-openrave-on-ubuntu-16.04.html)
 - Install Python and related dependencies: ``sudo apt-get install cython python python-dev python-pip python-scipy python-shapely ``
 - Install Python packages: ``sudo pip install pycddlib quadprog pyclipper``
 - Install [CasADi](http://casadi.org). Pre-compiled binaries are available, but
