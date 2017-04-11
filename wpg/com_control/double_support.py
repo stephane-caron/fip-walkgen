@@ -20,9 +20,9 @@
 
 from numpy import array, asarray, bmat, cross, dot, eye, hstack, vstack, zeros
 
-from pymanoid import Polytope
-from pymanoid.mpc import LinearPredictiveControl
 from pymanoid.misc import normalize
+from pymanoid.mpc import LinearPredictiveControl
+from pymanoid.polyhedra import compute_polytope_hrep
 from pymanoid.sim import gravity
 
 from preview import ZMPPreviewBuffer
@@ -62,10 +62,9 @@ class COMTube(object):
         tube_end = end_com + margin * n
         primal_vrep = [tube_start + s for s in cross_section] + \
             [tube_end + s for s in cross_section]
-        primal_hrep = Polytope.hrep(primal_vrep)  # TODO: formula by hand
-        dual_cone = contacts.compute_pendular_accel_cone(com=primal_vrep)
-        dual_vrep = dual_cone.vertices
-        dual_hrep = Polytope.hrep(dual_vrep)
+        primal_hrep = compute_polytope_hrep(primal_vrep)
+        dual_vrep = contacts.compute_pendular_accel_cone(com=primal_vrep)
+        dual_hrep = compute_polytope_hrep(dual_vrep)
         self.dual_hrep = dual_hrep
         self.dual_vrep = dual_vrep
         self.primal_hrep = primal_hrep

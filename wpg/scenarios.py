@@ -74,8 +74,7 @@ class EllipticStaircase(ContactFeed):
                      radius * sin(theta),
                      radius + .5 * height * sin(theta)],
                 rpy=(roughness * (random(3) - 0.5) + [0, 0, theta + .5 * pi]),
-                static_friction=contact_model.static_friction,
-                kinetic_friction=contact_model.kinetic_friction,
+                friction=contact_model.friction,
                 visible=visible,
                 link=robot.left_foot)
             right_foot = Contact(
@@ -84,8 +83,7 @@ class EllipticStaircase(ContactFeed):
                      1.2 * radius * sin(theta + .5 * angular_step),
                      radius + .5 * height * sin(theta + .5 * angular_step)],
                 rpy=(roughness * (random(3) - 0.5) + [0, 0, theta + .5 * pi]),
-                static_friction=contact_model.static_friction,
-                kinetic_friction=contact_model.kinetic_friction,
+                friction=contact_model.friction,
                 visible=visible,
                 link=robot.right_foot)
             self.contacts.append(left_foot)
@@ -124,8 +122,7 @@ class RegularStaircase(ContactFeed):
             shape=contact_model.shape,
             pos=[-step_length - init_dist, 0, -step_height],
             rpy=[0, 0, 0],
-            static_friction=contact_model.static_friction,
-            kinetic_friction=contact_model.kinetic_friction,
+            friction=contact_model.friction,
             visible=visible,
             name="StaircaseStep0",
             link=robot.left_foot)
@@ -133,8 +130,7 @@ class RegularStaircase(ContactFeed):
             shape=contact_model.shape,
             pos=[-step_length - init_dist, -width, -step_height],
             rpy=[0, 0, 0],
-            static_friction=contact_model.static_friction,
-            kinetic_friction=contact_model.kinetic_friction,
+            friction=contact_model.friction,
             visible=visible,
             name="StaircaseStep0",
             link=robot.right_foot)
@@ -145,8 +141,7 @@ class RegularStaircase(ContactFeed):
                 shape=contact_model.shape,
                 pos=[(2*i + 1) * step_length, 0, (2*i + 1) * step_height],
                 rpy=[0, 0, 0],
-                static_friction=contact_model.static_friction,
-                kinetic_friction=contact_model.kinetic_friction,
+                friction=contact_model.friction,
                 visible=visible,
                 name="StaircaseStep%d" % (len(self.contacts) + 1),
                 link=robot.left_foot)
@@ -154,8 +149,7 @@ class RegularStaircase(ContactFeed):
                 shape=contact_model.shape,
                 pos=[2*i * step_length, -width, 2*i * step_height],
                 rpy=[0, 0, 0],
-                static_friction=contact_model.static_friction,
-                kinetic_friction=contact_model.kinetic_friction,
+                friction=contact_model.friction,
                 visible=visible,
                 name="StaircaseStep%d" % (len(self.contacts) + 0),
                 link=robot.right_foot)
@@ -179,8 +173,7 @@ class SteppingStones(ContactFeed):
                 shape=contact_model.shape,
                 pos=left_pos + pvar * left_rand1,
                 rpy=roughness * left_rand2,
-                static_friction=contact_model.static_friction,
-                kinetic_friction=contact_model.kinetic_friction,
+                friction=contact_model.friction,
                 visible=visible,
                 name="SteppingStone%d" % (len(self.contacts) + 1),
                 link=robot.left_foot)
@@ -188,8 +181,7 @@ class SteppingStones(ContactFeed):
                 shape=contact_model.shape,
                 pos=right_pos + pvar * right_rand1,
                 rpy=delta_rpy + roughness * right_rand2,
-                static_friction=contact_model.static_friction,
-                kinetic_friction=contact_model.kinetic_friction,
+                friction=contact_model.friction,
                 visible=visible,
                 name="SteppingStone%d" % (len(self.contacts) + 0),
                 link=robot.right_foot)

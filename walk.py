@@ -127,11 +127,11 @@ class WrenchDrawer(pymanoid.drawers.PointMassWrenchDrawer):
         super(WrenchDrawer, self).__init__(point_mass, contact_set)
         self.am = zeros(3)
 
-    def find_supporting_wrenches(self, gravity):
+    def find_supporting_wrenches(self, sim):
         mass = self.point_mass.mass
         p = self.point_mass.p
         pdd = self.point_mass.pdd
-        wrench = hstack([mass * (pdd - gravity), self.am])
+        wrench = hstack([mass * (pdd - sim.gravity), self.am])
         support = self.contact_set.find_supporting_wrenches(wrench, p)
         return support
 
@@ -177,7 +177,7 @@ def generate_posture():
         left_foot=contact_feed.contacts[1],
         right_foot=contact_feed.contacts[0])
     robot.init_ik(robot.whole_body)
-    robot.set_ff_pos([0, 0, 2])  # start PG with the robot above contacts
+    robot.set_pos([0, 0, 2])  # start PG with the robot above contacts
     robot.generate_posture(init_stance, max_it=50)
 
 
@@ -281,7 +281,7 @@ if __name__ == "__main__":
     sim.set_viewer()
     robot.set_transparency(0.3)
     contact_model = pymanoid.Contact(
-        shape=(0.12, 0.06), static_friction=0.8, visible=False,
+        shape=(0.12, 0.06), friction=0.8, visible=False,
         name="ContactModel")
     contact_feed = EllipticStaircase(
         robot, radius=1.4, angular_step=0.5, height=1.2, roughness=0.5,
