@@ -45,7 +45,7 @@ class NonlinearPredictiveController(pymanoid.Process):
         self.nlp.add_constraint(dist, lb=[lb], ub=[ub])
 
     def add_friction_constraint(self, contact, p, z):
-        mu = contact.static_friction
+        mu = contact.friction
         ZG = p - z
         ZG2 = casadi.dot(ZG, ZG)
         ZGn2 = casadi.dot(ZG, contact.n) ** 2
@@ -53,7 +53,7 @@ class NonlinearPredictiveController(pymanoid.Process):
         self.nlp.add_constraint(slackness, lb=[-self.nlp.infty], ub=[0])
 
     def add_linear_friction_constraints(self, contact, p, z):
-        mu_inner = contact.static_friction / casadi.sqrt(2)
+        mu_inner = contact.friction / casadi.sqrt(2)
         ZG = p - z
         ZGt = casadi.dot(ZG, contact.t)
         ZGb = casadi.dot(ZG, contact.b)
