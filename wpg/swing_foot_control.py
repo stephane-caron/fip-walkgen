@@ -20,7 +20,7 @@
 
 import TOPP
 
-from numpy import arange, dot, ones, zeros
+from numpy import arange, ones, zeros
 from TOPP.Utilities import vect2str
 
 import pymanoid
@@ -28,79 +28,23 @@ import pymanoid
 from pymanoid.body import Box
 from pymanoid.draw import draw_line, draw_point
 from pymanoid.misc import norm
-from pymanoid.rotations import quat_slerp, rotation_matrix_from_quat
+from pymanoid.interp import interpolate_uab_hermite, quat_slerp
+from pymanoid.rotations import rotation_matrix_from_quat
 
 
-def interpolate_cubic_hermite(p0, p1, v0, v1):
-    C3 = 2 * p0 - 2 * p1 + v0 + v1
-    C2 = -3 * p0 + 3 * p1 - 2 * v0 - v1
-    C1 = v0
-    C0 = p0
-    return C0, C1, C2, C3
-
-
-def interpolate_uab_hermite(p0, p1, v0, v1):
+def interpolate_uab_hermite_topp(p0, v0, p1, v1):
     """
-    Interpolate a Hermite path between :math:`p_0` and :math:`p_1` with tangents
-    parallel to :math:`v_0` and :math:`v_1`, respectively. The output path
-    `B(s)` minimizes a relaxation of the uniform acceleration bound:
-
-    .. math::
-
-        minimize M s.t. \\forall s \in [0, 1],
-        \\begin{eqnarray}
-        \\mathrm{minimize} & & M \\\\
-        \\mathrm{subject\\ to} & & \\forall s \\in [0, 1],\\
-            \\|\\ddot{B}(s)\\|^s \\leq M
-        \\end{eqnarray}
+    Wrapper to :func:`pymanoid.interp.interpolate_uab_hermite`` for use with
+    TOPP.
 
     Parameters
     ----------
     p0 : array, shape=(3,)
         Start point.
-    p1 : array, shape=(3,)
-        End point.
     v0 : array, shape=(3,)
         Start velocity tangent.
-    v1 : array, shape=(3,)
-        End velocity tangent.
-
-    Note
-    ----
-    We also impose that the output tangents share the sign of v0 and v1,
-    respectively.
-    """
-    Delta = p1 - p0
-    _Delta_v0 = dot(Delta, v0)
-    _Delta_v1 = dot(Delta, v1)
-    _v0_v0 = dot(v0, v0)
-    _v0_v1 = dot(v0, v1)
-    _v1_v1 = dot(v1, v1)
-    b0 = 6 * (3 * _Delta_v0 * _v1_v1 - 2 * _Delta_v1 * _v0_v1) / (
-        9 * _v0_v0 * _v1_v1 - 4 * _v0_v1 * _v0_v1)
-    if b0 < 0:
-        print "Hermite: b0 < 0"
-        b0 *= -1
-    b1 = 6 * (-2 * _Delta_v0 * _v0_v1 + 3 * _Delta_v1 * _v0_v0) / (
-        9 * _v0_v0 * _v1_v1 - 4 * _v0_v1 * _v0_v1)
-    if b1 < 0:
-        print "Hermite: b1 < 0"
-        b1 *= -1
-    return interpolate_cubic_hermite(p0, p1, b0 * v0, b1 * v1)
-
-
-def interpolate_uab_hermite_topp(p0, p1, v0, v1):
-    """
-    Wrapper to ``get_ubound_hermite_curve`` for use with TOPP.
-
-    Parameters
-    ----------
-    p0 : array, shape=(3,)
-        Start point.
     p1 : array, shape=(3,)
         End point.
-    v0 : array, shape=(3,)
-        Start velocity tangent.
     v1 : array, shape=(3,)
         End velocity tangent.
 
@@ -109,7 +53,8 @@ def interpolate_uab_hermite_topp(p0, p1, v0, v1):
     path : TOPP.Trajectory.PiecewisePolynomialTrajectory
         Interpolated trajectory in TOPP format.
     """
-    C0, C1, C2, C3 = interpolate_uab_hermite(p0, p1, v0, v1)
+    poly = interpolate_uab_hermite(p0, v0, p1, v1)
+    C0, C1, C2, C3 = poly.coeffs
     path_str = "%f\n%d" % (1., 3)
     for k in xrange(3):
         path_str += "\n%f %f %f %f" % (C0[k], C1[k], C2[k], C3[k])
@@ -184,11 +129,11 @@ class SwingFootController(pymanoid.Process):
         v1 = 0.5 * t - 0.5 * n
         if norm(self.foot_vel) > 1e-4:
             v0 = self.foot_vel
-            self.path = interpolate_uab_hermite_topp(p0, p1, v0, v1)
+            self.path = interpolate_uab_hermite_topp(p0, v0, p1, v1)
             self.sd_beg = norm(v0) / norm(self.path.Evald(0.))
         else:  # choose initial direction
             v0 = 0.3 * self.foot.t + 0.7 * self.foot.n
-            self.path = interpolate_uab_hermite_topp(p0, p1, v0, v1)
+            self.path = interpolate_uab_hermite_topp(p0, v0, p1, v1)
             self.sd_beg = 0.
 
     def create_topp_instance(self):
@@ -251,6 +196,9 @@ class SwingFootController(pymanoid.Process):
         self.update_target_pose(sim.dt)
 
     def plot_profiles(self):
+        """
+        Plot TOPP profiles, e.g. for debugging.
+        """
         import pylab
         pylab.ion()
         self.topp.WriteProfilesList()
@@ -265,15 +213,24 @@ class SwingFootController(pymanoid.Process):
         pylab.axis([0, 1, 0, 10])
 
     def draw(self):
+        """
+        Draw the interpolated foot path.
+
+        Returns
+        -------
+        handle : openravepy.GraphHandle
+            OpenRAVE graphical handle. Must be stored in some variable,
+            otherwise the drawn object will vanish instantly.
+        """
         foot_path = self.retimed_traj.path
         if foot_path is None:
             return []
         ds = self.discrtimestep
         handles = [draw_point(foot_path.Eval(0), color='m', pointsize=0.007)]
         for s in arange(ds, foot_path.duration + ds, ds):
-            handles.append(
-                draw_point(foot_path.Eval(s), color='b', pointsize=0.01))
-            handles.append(
-                draw_line(foot_path.Eval(s - ds), foot_path.Eval(s), color='b',
-                          linewidth=3))
+            handles.append(draw_point(
+                foot_path.Eval(s), color='b', pointsize=0.01))
+            handles.append(draw_line(
+                foot_path.Eval(s - ds), foot_path.Eval(s), color='b',
+                linewidth=3))
         return handles
