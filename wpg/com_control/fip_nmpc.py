@@ -105,15 +105,6 @@ class FIPPredictiveController(NonlinearPredictiveController):
             if 2 * k < nb_steps:
                 T_swing = T_swing + dT_k
 
-            if False:  # 3rd-order Taylor expansion (only use with small dT's)
-                p_next = p_k + v_k * dT_k + 0.5 * u_k * dT_k ** 2 \
-                    - omega2 * v_k * dT_k ** 3 / 6
-                v_next = v_k + u_k * dT_k - omega2 * v_k * dT_k ** 2 / 2
-
-            if False:  # 2nd-order Taylor expansion (only use with small dT's)
-                p_next = p_k + v_k * dT_k + 0.5 * u_k * dT_k ** 2
-                v_next = v_k + u_k * dT_k
-
             self.add_com_boundary_constraint(contact, p_k)
             self.add_friction_constraint(contact, p_k, z_k)
             # self.add_friction_constraint(contact, p_next, z_k)
