@@ -38,7 +38,19 @@ class NonlinearPredictiveController(pymanoid.Process):
 
     def __init__(self):
         super(NonlinearPredictiveController, self).__init__()
-        self.nlp = NonlinearProgram()
+        self.nlp = NonlinearProgram(solver='ipopt', options={
+            'fast_step_computation': 'yes',  # default: 'no'
+            'fixed_variable_treatment': 'relax_bounds',
+            'linear_solver': 'ma27',
+            'max_cpu_time': 0.1,  # [s]
+            'max_iter': 100,
+            'mu_strategy': "adaptive",  # default is "monotone"
+            # The adaptive strategy yields faster results in practice on the COP
+            # and ZMP controller, while it seems to have no effect on
+            # computation times of the (slower) Wrench controller.
+            'print_level': 0,  # default: 5
+            'warm_start_init_point': 'yes',  # default: 'no'
+        })
 
     def add_com_boundary_constraint(self, contact, p, lb=0.5, ub=1.5):
         dist = casadi.dot(p - contact.p, contact.n)
