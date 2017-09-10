@@ -24,12 +24,12 @@ import sys
 
 from numpy import hstack, random, zeros
 
-try:
-    import pymanoid
-except ImportError:
+try:  # use local pymanoid submodule
     script_path = os.path.realpath(__file__)
-    sys.path.append(os.path.dirname(script_path) + '/pymanoid')
+    sys.path = [os.path.dirname(script_path) + '/pymanoid'] + sys.path
     import pymanoid
+except:  # this is to avoid warning E402 from Pylint :p
+    pass
 
 from pymanoid import Contact, ContactSet, PointMass
 from pymanoid.drawers import TrajectoryDrawer
