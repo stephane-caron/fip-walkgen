@@ -53,7 +53,7 @@ sudo make install
 Finally, clone this repository and its submodule via:
 
 ```bash
-git clone --recursive https://github.com/stephane-caron/3d-walking-nmpc.git
+git clone --recursive https://github.com/stephane-caron/dynamic-walking.git
 ```
 
 If you already have [pymanoid](https://github.com/stephane-caron/pymanoid)
