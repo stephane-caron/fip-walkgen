@@ -1,4 +1,4 @@
-# FIP Dynamic Walking
+# 3D Walking by Nonlinear Model Predictive Control
 
 Source code for https://hal.archives-ouvertes.fr/hal-01481052
 
@@ -53,7 +53,7 @@ sudo make install
 Finally, clone this repository and its submodule via:
 
 ```bash
-git clone --recursive https://github.com/stephane-caron/dynamic-walking.git
+git clone --recursive https://github.com/stephane-caron/3d-walking-nmpc.git
 ```
 
 If you already have [pymanoid](https://github.com/stephane-caron/pymanoid)
