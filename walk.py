@@ -108,6 +108,14 @@ class PreviewDrawer(pymanoid.Process):
         self.pendulum_handle = None
         self.swing_handle = None
 
+    def hide(self):
+        handle_lists = [
+            self.mpc_handle, self.lqr_handle, self.pendulum_handle,
+            self.swing_handle]
+        for handles in handle_lists:
+            for g in handles:
+                g.SetShow(False)
+
     def on_tick(self, sim):
         if not wpg.com_mpc.preview.is_empty:
             self.mpc_handle = wpg.com_mpc.preview.draw('b')
