@@ -278,7 +278,21 @@ def record_video():
     sim.step(600)
 
 
+def print_usage():
+    print "Usage: %s [scenario]" % sys.argv[0]
+    print "Scenarios:"
+    print "    --elliptic, -e       Elliptic stairase scenario"
+    print "    --regular, -r        Regular stairase scenario"
+
+
 if __name__ == "__main__":
+    if "--elliptic" in sys.argv or "-e" in sys.argv:
+        staircase = "elliptic-staircase"
+    elif "--regular" in sys.argv or "-r" in sys.argv:
+        staircase = "regular-staircase"
+    else:  # default scenario
+        print "No scenario specified. Using elliptic staircase."
+        staircase = "elliptic-staircase"
     random.seed(34)
     sim = pymanoid.Simulation(dt=0.03)
     try:
@@ -288,7 +302,7 @@ if __name__ == "__main__":
     sim.set_viewer()
     robot.set_transparency(0.3)
     contact_feed = ContactFeed(
-        path='scenarios/elliptic-staircase/contacts.json',
+        path='scenarios/%s/contacts.json' % staircase,
         cyclic=True)
     for (i, contact) in enumerate(contact_feed.contacts):
         contact.link = robot.right_foot if i % 2 == 0 else robot.left_foot
