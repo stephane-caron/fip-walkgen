@@ -38,8 +38,6 @@ from pymanoid.tasks import DOFTask, MinCAMTask
 
 from wpg import WalkingPatternGenerator
 from wpg.fip_dynamics import FIP
-# from wpg.scenarios import EllipticStaircase
-# from wpg.scenarios import HorizontalFloor
 from wpg.state_estimation import StateEstimator
 
 
