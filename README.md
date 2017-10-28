@@ -1,4 +1,4 @@
-# 3D Walking by Nonlinear Model Predictive Control
+# 3D walking by predictive control of the floating-base pendulum
 
 Source code for https://hal.archives-ouvertes.fr/hal-01481052
 
