@@ -1,4 +1,4 @@
-# FIP Dynamic Walking
+# 3D Walking by Nonlinear Model Predictive Control
 
 Source code for https://hal.archives-ouvertes.fr/hal-01481052
 
