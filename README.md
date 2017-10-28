@@ -1,4 +1,4 @@
-# 3D walking by predictive control of the floating-base pendulum
+# 3D walking by NMPC of the floating-base pendulum
 
 Source code for https://hal.archives-ouvertes.fr/hal-01481052
 
