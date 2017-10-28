@@ -20,9 +20,9 @@
 
 import pymanoid
 
-from pymanoid import ContactSet, PointMass
+from pymanoid import PointMass, Stance
 from pymanoid.sim import gravity
-from pymanoid.tasks import ContactTask, LinkPoseTask
+from pymanoid.tasks import ContactTask, PoseTask
 
 # from com_control import COPPredictiveController as PredictiveController
 # from com_control import WrenchPredictiveController as PredictiveController
@@ -71,11 +71,9 @@ class WalkingPatternGenerator(pymanoid.Process):
         swing_start = first_contact
         swing_target = third_contact
         com_target = PointMass(
-            [0, 0, 0], 0.5 * robot.mass, color='g', name="COMTarget",
-            visible=True)
+            [0, 0, 0], 0.5 * robot.mass, color='g', visible=True)
         ds_com_target = PointMass(
-            [0, 0, 0], 0.5 * robot.mass, color='b', name="DSCOMTarget",
-            visible=False)
+            [0, 0, 0], 0.5 * robot.mass, color='b', visible=False)
         com_target.set_pos(swing_target.p + [0., 0., robot.leg_length])
         com_target.set_vel(forward_velocity * swing_target.t)
         time_to_heel_strike = 1.  # not computed yet
@@ -164,7 +162,7 @@ class WalkingPatternGenerator(pymanoid.Process):
     def switch_controllers(self, sim):
         """Prepare swing and COM controllers for next step."""
         prev_foot = self.swing_controller.foot_link
-        next_foot = self.robot.left_foot if 'right_foot' in prev_foot.name \
+        next_foot = self.robot.left_foot if 'right' in prev_foot.name.lower() \
             else self.robot.right_foot
         self.swing_controller.reset(next_foot, self.swing_target)
         self.com_target.set_pos(
@@ -196,10 +194,10 @@ class WalkingPatternGenerator(pymanoid.Process):
         contact_weight = max(prev_lf_task.weight, prev_rf_task.weight)
         self.robot.ik.remove_task(self.robot.left_foot.name)
         self.robot.ik.remove_task(self.robot.right_foot.name)
-        OtherTask = LinkPoseTask if phase == 'SS' else ContactTask
+        OtherTask = PoseTask if phase == 'SS' else ContactTask
         other_weight = self.__min_swing_weight if phase == 'SS' else \
             contact_weight
-        if 'left_foot' in self.support_contact.link.name:
+        if 'left' in self.support_contact.link.name.lower():
             left_foot_task = ContactTask(
                 self.robot, self.robot.left_foot, self.support_contact,
                 weight=contact_weight)
@@ -308,11 +306,13 @@ class WalkingPatternGenerator(pymanoid.Process):
         sim.log_comp_time('lqr_solve', self.com_lqr.lmpc.solve_time)
 
     def update_com_ds(self, sim):
-        contacts = ContactSet([self.swing_start, self.support_contact])
         try:
+            stance = Stance(
+                com=self.ds_com_target, left_foot=self.swing_start,
+                right_foot=self.support_contact)
             self.com_ds = DoubleSupportController(
                 self.nb_ds_steps, 0.5, self.pendulum.omega2,
-                self.state_estimator, self.ds_com_target, contacts)
+                self.state_estimator, self.ds_com_target, stance)
             sim.log_comp_time('dsqp_build', self.com_ds.lmpc.build_time)
             if self.com_ds.lmpc.solve_time is not None:
                 sim.log_comp_time('dsqp_solve', self.com_ds.lmpc.solve_time)

@@ -39,7 +39,7 @@ class COMTube(object):
         Start position of the COM.
     target_com : array
         End position of the COM.
-    contacts : ContactSet
+    stance : Stance
         Set of contacts used to compute the contact wrench cone.
     radius : scalar
         Side of the cross-section square (for ``shape`` > 2).
@@ -47,7 +47,7 @@ class COMTube(object):
         Safety margin (in [m]) around boundary COM positions.
     """
 
-    def __init__(self, start_com, end_com, contacts, radius, margin):
+    def __init__(self, start_com, end_com, stance, radius, margin):
         n = normalize(end_com - start_com)
         t = array([0., 0., 1.])
         t -= dot(t, n) * n
@@ -63,7 +63,7 @@ class COMTube(object):
         primal_vrep = [tube_start + s for s in cross_section] + \
             [tube_end + s for s in cross_section]
         primal_hrep = compute_polytope_hrep(primal_vrep)
-        dual_vrep = contacts.compute_pendular_accel_cone(com=primal_vrep)
+        dual_vrep = stance.compute_pendular_accel_cone(com_vertices=primal_vrep)
         dual_hrep = compute_polytope_hrep(dual_vrep)
         self.dual_hrep = dual_hrep
         self.dual_vrep = dual_vrep
@@ -93,11 +93,11 @@ class DoubleSupportController(object):
     """
 
     def __init__(self, nb_steps, duration, omega2, state_estimator, com_target,
-                 contacts, tube_radius=0.02, tube_margin=0.01):
+                 stance, tube_radius=0.02, tube_margin=0.01):
         start_com = state_estimator.com
         start_comd = state_estimator.comd
         tube = COMTube(
-            start_com, com_target.p, contacts, tube_radius, tube_margin)
+            start_com, com_target.p, stance, tube_radius, tube_margin)
         dt = duration / nb_steps
         I = eye(3)
         A = asarray(bmat([[I, dt * I], [zeros((3, 3)), I]]))
@@ -121,7 +121,7 @@ class DoubleSupportController(object):
             P = lmpc.X[:-1, 0:3]
             V = lmpc.X[:-1, 3:6]
             Z = P + (gravity - U) / omega2
-            preview = ZMPPreviewBuffer([contacts])
+            preview = ZMPPreviewBuffer([stance])
             preview.update(P, V, Z, [dt] * nb_steps, omega2)
         except ValueError as e:
             print "%s error:" % type(self).__name__, e

@@ -56,10 +56,10 @@ class FIPRegulator(object):
         e = [None] * nb_steps
         for k in xrange(nb_steps):
             contact = contacts[k]
-            force_face = contact.force_face
-            C_fric = hstack([force_face, fzeros])
-            D_fric = -force_face
-            e_fric = dot(force_face, GZ_ref[k])
+            force_inequalities = contact.force_inequalities
+            C_fric = hstack([force_inequalities, fzeros])
+            D_fric = -force_inequalities
+            e_fric = dot(force_inequalities, GZ_ref[k])
             if not all(e_fric > -1e-10):
                 print "Warning: reference violates friction cone constraints"
             C_cop = zeros((4, 6))

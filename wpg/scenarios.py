@@ -21,24 +21,7 @@
 from numpy import arange, array, cos, pi, sin
 from numpy.random import random
 
-from pymanoid import Contact
-
-
-class ContactFeed(object):
-
-    def __init__(self, cyclic=False):
-        self.contacts = []
-        self.cyclic = cyclic
-        self.next_contact = 0
-
-    def pop(self):
-        i = self.next_contact
-        self.next_contact += 1
-        if self.next_contact >= len(self.contacts):
-            if not self.cyclic:
-                return None
-            self.next_contact = 0
-        return self.contacts[i]
+from pymanoid import ContactFeed
 
 
 class EllipticStaircase(ContactFeed):

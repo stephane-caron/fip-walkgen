@@ -84,12 +84,13 @@ class FIP(pymanoid.Process):
                  zmp_noise=None):
         assert omega2 > 1e-10, "FIP constant must be positive"
         super(FIP, self).__init__()
-        com_state = PointMass(com, mass, name='COMState', visible=False)
+        com_state = PointMass(com, mass, visible=False)
         comd = comd if comd is not None else zeros(3)
         zmp = zmp if zmp is not None else com + gravity / omega2
         zmp_delay = 0. if zmp_delay is None else zmp_delay
         zmp_noise = 0. if zmp_noise is None else zmp_noise
-        zmp_state = Point(zmp, name='ZMP', visible=False)
+        zmp_state = Point(zmp, visible=False)
+        zmp_state.hide()
         self.__time_ds = 0
         self.__time_nonqs = 0
         self.com_state = com_state

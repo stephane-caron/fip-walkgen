@@ -95,9 +95,8 @@ class SwingFootController(pymanoid.Process):
 
     def __init__(self, init_foot_link, max_foot_accel):
         super(SwingFootController, self).__init__()
-        foot = Box(
-            X=0.12, Y=0.06, Z=0.01, color='c', visible=False, transparency=0.5,
-            dZ=-0.01)
+        foot = Box(X=0.12, Y=0.06, Z=0.01, color='c', visible=False, dZ=-0.01)
+        foot.set_transparency(0.5)
         self.discrtimestep = 0.1
         self.end_pose = None
         self.foot = foot

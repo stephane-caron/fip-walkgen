@@ -31,15 +31,14 @@ try:  # use local pymanoid submodule
 except:  # this is to avoid warning E402 from Pylint :p
     pass
 
-from pymanoid import Contact, ContactSet, PointMass
-from pymanoid.drawers import TrajectoryDrawer
+from pymanoid import Contact, ContactFeed, ContactSet, PointMass
+from pymanoid.gui import PointMassWrenchDrawer, TrajectoryDrawer
 from pymanoid.sim import CameraRecorder, gravity
-from pymanoid.tasks import DOFTask
-from pymanoid.tasks import MinCAMTask
+from pymanoid.tasks import DOFTask, MinCAMTask
 
 from wpg import WalkingPatternGenerator
 from wpg.fip_dynamics import FIP
-from wpg.scenarios import EllipticStaircase
+# from wpg.scenarios import EllipticStaircase
 # from wpg.scenarios import HorizontalFloor
 from wpg.state_estimation import StateEstimator
 
@@ -127,7 +126,7 @@ class PreviewDrawer(pymanoid.Process):
         self.pendulum_handle = pendulum.draw()
 
 
-class WrenchDrawer(pymanoid.drawers.PointMassWrenchDrawer):
+class WrenchDrawer(PointMassWrenchDrawer):
 
     def __init__(self):
         point_mass = PointMass(robot.com, robot.mass, visible=False)
@@ -181,12 +180,14 @@ class WrenchDrawer(pymanoid.drawers.PointMassWrenchDrawer):
 def generate_posture():
     """Initial posture generation."""
     init_stance = pymanoid.Stance(
-        com=contact_feed.contacts[1].p + [0, 0, robot.leg_length],
+        com=PointMass(
+            pos=contact_feed.contacts[1].p + [0, 0, robot.leg_length],
+            mass=robot.mass),
         left_foot=contact_feed.contacts[1],
         right_foot=contact_feed.contacts[0])
-    robot.init_ik(robot.whole_body)
     robot.set_pos([0, 0, 2])  # start PG with the robot above contacts
-    robot.generate_posture(init_stance, max_it=50)
+    init_stance.bind(robot)
+    robot.ik.solve(max_it=50)
 
 
 def update_robot_ik():
@@ -203,13 +204,13 @@ def update_robot_ik():
     # prevent arms from leaning backward:
     robot.ik.add_task(DOFTask(robot, robot.L_SHOULDER_P, 0.))
     robot.ik.add_task(DOFTask(robot, robot.R_SHOULDER_P, 0.))
-    robot.ik.tasks[robot.left_foot.name.upper()].weight = 1.
-    robot.ik.tasks[robot.right_foot.name.upper()].weight = 1.
+    robot.ik.tasks[robot.left_foot.name].weight = 1.
+    robot.ik.tasks[robot.right_foot.name].weight = 1.
     robot.ik.tasks['COM'].weight = 1e-2
     robot.ik.tasks['MIN_CAM'].weight = 1e-4
     robot.ik.tasks['ROT_P'].weight = 1e-4
-    robot.ik.tasks[robot.chest_p_name.upper()].weight = 1e-4
-    robot.ik.tasks[robot.chest_y_name.upper()].weight = 1e-4
+    robot.ik.tasks[robot.chest_p_name].weight = 1e-4
+    robot.ik.tasks[robot.chest_y_name].weight = 1e-4
     if '--shoulders' in sys.argv:
         robot.ik.tasks['L_SHOULDER_P'].weight = 1e-4
         robot.ik.tasks['L_SHOULDER_R'].weight = 1e-4
@@ -280,7 +281,7 @@ def record_video():
 
 
 if __name__ == "__main__":
-    random.seed(51)
+    random.seed(34)
     sim = pymanoid.Simulation(dt=0.03)
     try:
         robot = pymanoid.robots.HRP4()
@@ -288,13 +289,11 @@ if __name__ == "__main__":
         robot = pymanoid.robots.JVRC1()
     sim.set_viewer()
     robot.set_transparency(0.3)
-    contact_model = pymanoid.Contact(
-        shape=(0.12, 0.06), friction=0.8, visible=False,
-        name="ContactModel")
-    contact_feed = EllipticStaircase(
-        robot, radius=1.4, angular_step=0.5, height=1.2, roughness=0.5,
-        contact_model=contact_model, visible=True)
-    # contact_feed = HorizontalFloor(robot, 10, 0.6, 0.3, contact_model)
+    contact_feed = ContactFeed(
+        path='scenarios/elliptic-staircase/contacts.json',
+        cyclic=True)
+    for (i, contact) in enumerate(contact_feed.contacts):
+        contact.link = robot.right_foot if i % 2 == 0 else robot.left_foot
     generate_posture()
     pendulum = FIP(
         robot.mass, omega2=9.81 / robot.leg_length, com=robot.com,
@@ -326,7 +325,7 @@ if __name__ == "__main__":
     sim.schedule_extra(rf_traj_drawer)
     sim.schedule_extra(robot.ik)
     sim.schedule_extra(stats_collector)
-    sim.schedule_extra(wrench_drawer)
+    # sim.schedule_extra(wrench_drawer)
 
     if '--record' in sys.argv:
         record_video()
