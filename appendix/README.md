@@ -1,9 +1,20 @@
 ## Appendices
 
-Scripts used in the appendix:
+Code used in the appendices of the paper.
 
-- Appendix A: run ``python cone_calculations.py | pdflatex`` to generate a
-  document with intermediate wrench cone calculations.
+### Appendix A: Proof of Proposition 1
 
-- Appendix B: implementations of the multi-contact support cones under fixed
-  COP, fixed VRP, and fixed COM target for a proportional control law.
+Run ``python cone_calculations.py | pdflatex`` to generate a PDF document with
+all intermediate wrench cone calculations.
+
+### Appendix B: Support Volumes for Virtual Repulsors and Attractors
+
+The script ``multi_contact_cones.py`` provides functions to compute and draw
+the cones of COM positions described in this appendix:
+
+- ``compute_cop_pendular_cone`` and ``draw_cop_pendular_cone``: sustainable
+  COMs when the center of pressure (COP) is fixed.
+- ``compute_vrp_com_cone`` and ``draw_vrp_com_cone``: sustainable COMs when the
+  virtual repellent point (VRP) is fixed.
+- ``compute_attraction_polyhedron`` and ``draw_attraction_polyhedron``:
+  sustainable COMs when the virtual attractor point (VAP) is fixed.
