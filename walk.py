@@ -175,8 +175,8 @@ class WrenchDrawer(PointMassWrenchDrawer):
                 h.SetShow(True)
 
 
-def generate_posture():
-    """Initial posture generation."""
+def init_posture(contact_feed):
+    """Put the robot in its initial posture."""
     init_stance = pymanoid.Stance(
         com=PointMass(
             pos=contact_feed.contacts[1].p + [0, 0, robot.leg_length],
@@ -315,7 +315,7 @@ if __name__ == "__main__":
     robot.set_transparency(0.3)
     sim.set_viewer()
     contact_feed = load_scenario()
-    generate_posture()
+    init_posture()
     pendulum = FIP(
         robot.mass, omega2=9.81 / robot.leg_length, com=robot.com,
         zmp_delay=ZMP_DELAY, zmp_noise=ZMP_NOISE)
