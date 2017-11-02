@@ -285,27 +285,36 @@ def print_usage():
     print "    --regular, -r        Regular stairase scenario"
 
 
-if __name__ == "__main__":
+def load_scenario():
     if "--elliptic" in sys.argv or "-e" in sys.argv:
         staircase = "elliptic-staircase"
     elif "--regular" in sys.argv or "-r" in sys.argv:
         staircase = "regular-staircase"
     else:  # default scenario
-        print "No scenario specified. Using elliptic staircase."
+        print_usage()
+        print "\nNo scenario specified. Using elliptic staircase."
         staircase = "elliptic-staircase"
+    contact_feed = ContactFeed(
+        path='scenarios/%s/contacts.json' % staircase,
+        cyclic=True)
+    for (i, contact) in enumerate(contact_feed.contacts):
+        contact.link = robot.right_foot if i % 2 == 0 else robot.left_foot
+    return contact_feed
+
+
+if __name__ == "__main__":
+    if "-h" in sys.argv or "--help" in sys.argv:
+        print_usage()
+        sys.exit()
     random.seed(34)
     sim = pymanoid.Simulation(dt=0.03)
     try:
         robot = pymanoid.robots.HRP4()
     except:  # model not found
         robot = pymanoid.robots.JVRC1()
-    sim.set_viewer()
     robot.set_transparency(0.3)
-    contact_feed = ContactFeed(
-        path='scenarios/%s/contacts.json' % staircase,
-        cyclic=True)
-    for (i, contact) in enumerate(contact_feed.contacts):
-        contact.link = robot.right_foot if i % 2 == 0 else robot.left_foot
+    sim.set_viewer()
+    contact_feed = load_scenario()
     generate_posture()
     pendulum = FIP(
         robot.mass, omega2=9.81 / robot.leg_length, com=robot.com,
@@ -337,7 +346,7 @@ if __name__ == "__main__":
     sim.schedule_extra(rf_traj_drawer)
     sim.schedule_extra(robot.ik)
     sim.schedule_extra(stats_collector)
-    # sim.schedule_extra(wrench_drawer)
+    sim.schedule_extra(wrench_drawer)
 
     if '--record' in sys.argv:
         record_video()
