@@ -315,7 +315,7 @@ if __name__ == "__main__":
     robot.set_transparency(0.3)
     sim.set_viewer()
     contact_feed = load_scenario()
-    init_posture()
+    init_posture(contact_feed)
     pendulum = FIP(
         robot.mass, omega2=9.81 / robot.leg_length, com=robot.com,
         zmp_delay=ZMP_DELAY, zmp_noise=ZMP_NOISE)
