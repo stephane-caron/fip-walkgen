@@ -20,7 +20,7 @@
 
 import TOPP
 
-from numpy import arange, ones, zeros
+from numpy import arange, dot, ones, zeros
 from TOPP.Utilities import vect2str
 
 import pymanoid
@@ -28,8 +28,60 @@ import pymanoid
 from pymanoid.body import Box
 from pymanoid.draw import draw_line, draw_point
 from pymanoid.misc import norm
-from pymanoid.interp import interpolate_uab_hermite, quat_slerp
+from pymanoid.interp import interpolate_cubic_hermite, quat_slerp
 from pymanoid.rotations import rotation_matrix_from_quat
+
+
+def interpolate_uab_hermite(p0, u0, p1, u1):
+    """
+    Interpolate a Hermite path between :math:`p_0` and :math:`p_1` with tangents
+    parallel to :math:`u_0` and :math:`u_1`, respectively. The output path
+    `B(s)` minimizes a relaxation of the uniform acceleration bound:
+
+    .. math::
+
+        \\begin{eqnarray}
+        \\mathrm{minimize} & & M \\\\
+        \\mathrm{subject\\ to} & & \\forall s \\in [0, 1],\\
+            \\|\\ddot{B}(s)\\|^2 \\leq M
+        \\end{eqnarray}
+
+    Parameters
+    ----------
+    p0 : (3,) array
+        Start point.
+    u0 : (3,) array
+        Start tangent.
+    p1 : (3,) array
+        End point.
+    u1 : (3,) array
+        End tangent.
+
+    Returns
+    -------
+    P : numpy.polynomial.Polynomial
+        Polynomial function of the Hermite curve.
+
+    Note
+    ----
+    We also impose that the output tangents share the sign of :math:`t_0` and
+    :math:`t_1`, respectively.
+    """
+    Delta = p1 - p0
+    _Delta_u0 = dot(Delta, u0)
+    _Delta_u1 = dot(Delta, u1)
+    _u0_u0 = dot(u0, u0)
+    _u0_u1 = dot(u0, u1)
+    _u1_u1 = dot(u1, u1)
+    b0 = 6 * (3 * _Delta_u0 * _u1_u1 - 2 * _Delta_u1 * _u0_u1) / (
+        9 * _u0_u0 * _u1_u1 - 4 * _u0_u1 * _u0_u1)
+    if b0 < 0:
+        b0 *= -1
+    b1 = 6 * (-2 * _Delta_u0 * _u0_u1 + 3 * _Delta_u1 * _u0_u0) / (
+        9 * _u0_u0 * _u1_u1 - 4 * _u0_u1 * _u0_u1)
+    if b1 < 0:
+        b1 *= -1
+    return interpolate_cubic_hermite(p0, b0 * u0, p1, b1 * u1)
 
 
 def interpolate_uab_hermite_topp(p0, v0, p1, v1):
