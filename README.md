@@ -60,6 +60,12 @@ If you already have [pymanoid](https://github.com/stephane-caron/pymanoid)
 installed on your system, make sure that its version matches that of the
 submodule.
 
+## Usage
+
+Run the main script via:
+- ``./walk.py -e`` for the elliptic staircase scenario
+- ``./walk.py -r`` for a regular staircase
+
 ## Questions?
 
 Feel free to post your questions or comments in the issue tracker.
