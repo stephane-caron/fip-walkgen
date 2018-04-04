@@ -34,7 +34,7 @@ The following instructions were verified on various machines running Ubuntu
 14.04 and 16.04.
 
 - Install OpenRAVE: here are [instructions for Ubuntu 14.04](https://scaron.info/teaching/installing-openrave-on-ubuntu-14.04.html) as well as [for Ubuntu 16.04](https://scaron.info/teaching/installing-openrave-on-ubuntu-16.04.html)
-- Install Python and related dependencies: ``sudo apt-get install cython python python-dev python-pip python-scipy python-shapely ``
+- Install Python and related dependencies: ``sudo apt-get install cython python python-dev python-pip python-scipy python-shapely``
 - Install Python packages: ``sudo pip install pycddlib quadprog pyclipper``
 - Install [CasADi](http://casadi.org). Pre-compiled binaries are available, but
   I recommend you [build it from
@@ -53,7 +53,7 @@ sudo make install
 Finally, clone this repository and its submodule via:
 
 ```bash
-git clone --recursive https://github.com/stephane-caron/dynamic-walking.git
+git clone --recursive https://github.com/stephane-caron/fip-walking.git
 ```
 
 If you already have [pymanoid](https://github.com/stephane-caron/pymanoid)
