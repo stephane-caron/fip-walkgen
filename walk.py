@@ -19,6 +19,7 @@
 # dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
 
 import IPython
+import casadi  # check that CasADi is available
 import os
 import sys
 
@@ -225,10 +226,10 @@ def update_robot_ik():
 def set_camera_1():
     """Camera used to make the accompanying video."""
     sim.viewer.SetCamera([
-        [0., -0.25, 1., -4],
-        [-1., 0., 0., 0.],
-        [-0., -1., -0.25, 2.7],
-        [0, 0, 0, 1]])
+        [-0.85, -0.23,  0.46, -2.64],
+        [-0.52,  0.41, -0.75,  4.49],
+        [-0.02, -0.88, -0.48,  4.93],
+        [0.,  0.,  0.,  1.]])
 
 
 def set_camera_2():
@@ -314,6 +315,7 @@ if __name__ == "__main__":
         robot = pymanoid.robots.JVRC1()
     robot.set_transparency(0.3)
     sim.set_viewer()
+    set_camera_1()
     contact_feed = load_scenario()
     init_posture(contact_feed)
     pendulum = FIP(

@@ -131,7 +131,7 @@ class FIP(pymanoid.Process):
         cp = com + comd / self.omega + gravity / self.omega2
         zmp = self.zmp_state.p
         handles = [
-            draw_point(com, color='r', pointsize=0.05),
+            draw_point(com, color='r', pointsize=0.025),
             draw_point(cp, color='b', pointsize=0.025),
             draw_point(zmp, color='r', pointsize=0.025),
             draw_line(com, cp, color='b', linewidth=1),
