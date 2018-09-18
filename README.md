@@ -1,6 +1,6 @@
 # 3D walking by NMPC of the floating-base pendulum
 
-Source code for https://hal.archives-ouvertes.fr/hal-01481052
+Source code for https://hal.archives-ouvertes.fr/hal-01481052/document
 
 ## Abstract
 
