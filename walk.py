@@ -296,7 +296,7 @@ def load_scenario():
         print "\nNo scenario specified. Using elliptic staircase."
         staircase = "elliptic-staircase"
     contact_feed = ContactFeed(
-        path='scenarios/%s/contacts.json' % staircase,
+        path='footsteps/%s.json' % staircase,
         cyclic=True)
     for (i, contact) in enumerate(contact_feed.contacts):
         contact.link = robot.right_foot if i % 2 == 0 else robot.left_foot

@@ -24,7 +24,7 @@ from numpy.random import normal
 import pymanoid
 
 from pymanoid import Point, PointMass
-from pymanoid.draw import draw_line, draw_point
+from pymanoid.gui import draw_line, draw_point
 from pymanoid.sim import gravity
 
 

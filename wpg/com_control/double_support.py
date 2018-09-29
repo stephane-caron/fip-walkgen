@@ -20,9 +20,9 @@
 
 from numpy import array, asarray, bmat, cross, dot, eye, hstack, vstack, zeros
 
+from pymanoid.geometry import compute_polytope_hrep
 from pymanoid.misc import normalize
 from pymanoid.mpc import LinearPredictiveControl
-from pymanoid.polyhedra import compute_polytope_hrep
 from pymanoid.sim import gravity
 
 from preview import ZMPPreviewBuffer
@@ -71,7 +71,7 @@ class COMTube(object):
         self.primal_vrep = primal_vrep
 
     def draw(self, acc_scale=0.05):
-        from pymanoid.draw import draw_cone, draw_polyhedron
+        from pymanoid.gui import draw_cone, draw_polyhedron
         handles = []
         cyan, yellow = (0., 0.5, 0.5, 0.3), (0.5, 0.5, 0., 0.3)
         handles.extend(

@@ -25,7 +25,7 @@ from numpy import array, hstack, isreal, sqrt, zeros
 from threading import Lock
 from time import sleep
 
-from pymanoid.draw import draw_line, draw_point
+from pymanoid.gui import draw_line, draw_point
 from pymanoid.sim import gravity
 
 try:

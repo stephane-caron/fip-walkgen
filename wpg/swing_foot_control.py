@@ -26,10 +26,10 @@ from TOPP.Utilities import vect2str
 import pymanoid
 
 from pymanoid.body import Box
-from pymanoid.draw import draw_line, draw_point
+from pymanoid.gui import draw_line, draw_point
 from pymanoid.misc import norm
 from pymanoid.interp import interpolate_cubic_hermite, quat_slerp
-from pymanoid.rotations import rotation_matrix_from_quat
+from pymanoid.transformations import rotation_matrix_from_quat
 
 
 def interpolate_uab_hermite(p0, u0, p1, u1):
