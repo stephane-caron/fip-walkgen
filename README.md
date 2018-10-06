@@ -1,8 +1,8 @@
 # 3D walking by NMPC of the floating-base pendulum
 
-Source code for https://hal.archives-ouvertes.fr/hal-01481052/document
+<img src="https://scaron.info/figures/dynamic-walking.png" width="300" align="right" />
 
-<img src="https://scaron.info/figures/dynamic-walking.png" width="350" align="right" />
+Source code for https://hal.archives-ouvertes.fr/hal-01481052/document
 
 ## Installation
 
