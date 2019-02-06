@@ -30,8 +30,9 @@ git clone --recursive https://github.com/stephane-caron/fip-walking.git
 ```
 
 If you already have [pymanoid](https://github.com/stephane-caron/pymanoid)
-installed on your system, make sure that its version matches that of the
-submodule.
+installed on your system, make sure to clone submodules and run the ``walk.py``
+script from this repository (so that it uses the submodule rather than
+system-wide pymanoid version).
 
 ## Usage
 
