@@ -3,21 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of fip-walking
-# <https://github.com/stephane-caron/fip-walking>.
+# This file is part of fip-walkgen
+# <https://github.com/stephane-caron/fip-walkgen>.
 #
-# fip-walking is free software: you can redistribute it and/or modify it under
+# fip-walkgen is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation, either version 3 of the License, or (at your option) any later
 # version.
 #
-# fip-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walkgen is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 # FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 # details.
 #
 # You should have received a copy of the GNU General Public License along with
-# fip-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walkgen. If not, see <http://www.gnu.org/licenses/>.
 
 import IPython
 import casadi  # check that CasADi is available
@@ -30,7 +30,7 @@ try:  # use local pymanoid submodule
     script_path = os.path.realpath(__file__)
     sys.path = [os.path.dirname(script_path) + '/pymanoid'] + sys.path
     import pymanoid
-except:  # this is to avoid warning E402 from Pylint :p
+except Exception:  # this is to avoid warning E402 from Pylint :p
     pass
 
 from pymanoid import Contact, ContactFeed, ContactSet, PointMass
@@ -62,13 +62,13 @@ ZMP_NOISE = 0.1            # intensity of ZMP noise in [mm] / [ms]
 # Pattern generation
 
 DISABLE_LQR = False           # set to True to try NMPC without LQ regulation
-DRAW_DS_TUBE = False          # shows when the double-support controller is used
+DRAW_DS_TUBE = False          # shows when double-support controller is used
 FORWARD_VELOCITY = 0.15       # reference forward walking velocity in [m] / [s]
-MAX_SWING_FOOT_ACCEL = 4.     # maximum acceleration sent to the TOPP controller
-MAX_SWING_IK_WEIGHT = 2e-2    # weight on swing-foot task by the end of the step
+MAX_SWING_FOOT_ACCEL = 4.     # maximum acceleration sent to TOPP controller
+MAX_SWING_IK_WEIGHT = 2e-2    # weight on swing-foot task by end of step
 MIN_SWING_IK_WEIGHT = 1e-3    # weight on swing-foot task at beginning of step
 NB_LQR_STEPS = 30             # number of fixed-duration timesteps in the LQR
-NB_MPC_STEPS = 10             # number of variable-duration timesteps in the MPC
+NB_MPC_STEPS = 10             # number of variable-duration timesteps in MPC
 SIMULATE_INSTANT_MPC = False  # used to check an assertion we make in the paper
 
 
@@ -91,11 +91,11 @@ class StatsCollector(pymanoid.Process):
                 self.__time_nonqs += 1
 
     def print_info(self):
-        print "Fraction of time in DS: %.2f%%" % (
-            100. * (1 + self.__time_ds) / (1 + sim.nb_steps))
+        print("Fraction of time in DS: %.2f%%" % (
+            100. * (1 + self.__time_ds) / (1 + sim.nb_steps)))
         if self.__time_nonqs is not None:
-            print "Fraction of time in non-QS: %.2f%%" % (
-                100. * (1 + self.__time_nonqs) / (1 + sim.nb_steps))
+            print("Fraction of time in non-QS: %.2f%%" % (
+                100. * (1 + self.__time_nonqs) / (1 + sim.nb_steps)))
 
 
 class PreviewDrawer(pymanoid.Process):
@@ -158,8 +158,6 @@ class WrenchDrawer(PointMassWrenchDrawer):
         super(WrenchDrawer, self).on_tick(sim)
         if self.handles:
             self.handles[0][-1].SetShow(False)
-        elif __debug__:
-            print Exception("check contact wrenches")
 
     def recompute(self, contact, comdd, am):
         assert type(contact) in [Contact, ContactSet]
@@ -252,7 +250,6 @@ def record_video():
 
     raw_input("Press [Enter] to start.\n")
     sim.step(425)
-    # while raw_input("Is this the correct frame? [y/N] ").lower() != 'y':
     while not wpg.is_in_double_support:  # finish step
         sim.step()
     while wpg.is_in_double_support:  # now get right after the DS phase
@@ -269,7 +266,7 @@ def record_video():
         sim, wrench_drawer=wrench_drawer, post_preview_duration=0.8,
         callback=callback)
     cam_recorder.wait_for(2, sim)
-    for _ in xrange(15):
+    for _ in range(15):
         sim.step()
         cam_recorder.on_tick(sim)
         cam_recorder.on_tick(sim)
@@ -281,10 +278,10 @@ def record_video():
 
 
 def print_usage():
-    print "Usage: %s [scenario]" % sys.argv[0]
-    print "Scenarios:"
-    print "    --elliptic, -e       Elliptic stairase scenario"
-    print "    --regular, -r        Regular stairase scenario"
+    print("Usage: %s [scenario]" % sys.argv[0])
+    print("Scenarios:")
+    print("    --elliptic, -e       Elliptic stairase scenario")
+    print("    --regular, -r        Regular stairase scenario")
 
 
 def load_scenario():
@@ -294,7 +291,7 @@ def load_scenario():
         staircase = "regular-staircase"
     else:  # default scenario
         print_usage()
-        print "\nNo scenario specified. Using elliptic staircase."
+        print("\nNo scenario specified. Using elliptic staircase.")
         staircase = "elliptic-staircase"
     contact_feed = ContactFeed(
         path='footsteps/%s.json' % staircase,
@@ -312,7 +309,7 @@ if __name__ == "__main__":
     sim = pymanoid.Simulation(dt=0.03)
     try:
         robot = pymanoid.robots.HRP4()
-    except:  # model not found
+    except Exception:  # model not found
         robot = pymanoid.robots.JVRC1()
     robot.set_transparency(0.3)
     sim.set_viewer()
