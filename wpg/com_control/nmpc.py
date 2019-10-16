@@ -3,20 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of dynamic-walking
-# <https://github.com/stephane-caron/dynamic-walking>.
+# This file is part of fip-walking
+# <https://github.com/stephane-caron/fip-walking>.
 #
-# dynamic-walking is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+# fip-walking is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# dynamic-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walking is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
-# dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walking. If not, see <http://www.gnu.org/licenses/>.
 
 import casadi
 
@@ -45,8 +46,8 @@ class NonlinearPredictiveController(pymanoid.Process):
             'max_cpu_time': 0.1,  # [s]
             'max_iter': 100,
             'mu_strategy': "adaptive",  # default is "monotone"
-            # The adaptive strategy yields faster results in practice on the COP
-            # and ZMP controller, while it seems to have no effect on
+            # The adaptive strategy yields faster results in practice on the
+            # COP and ZMP controller, while it seems to have no effect on
             # computation times of the (slower) Wrench controller.
             'print_level': 0,  # default: 5
             'warm_start_init_point': 'yes',  # default: 'no'
@@ -110,19 +111,20 @@ class NonlinearPredictiveController(pymanoid.Process):
         dT = self.preview.dT
         T_swing = sum(dT[:self.nb_steps / 2])
         T_total = sum(dT)
-        print "\n"
-        print "%14s:  " % "dT's", [round(x, 3) for x in dT]
-        print "%14s:  " % "dT_min", "%.3f s" % self.dT_min
+        print("\n")
+        print("%14s:  " % "dT's", [round(x, 3) for x in dT])
+        print("%14s:  " % "dT_min", "%.3f s" % self.dT_min)
         if self.swing_duration is not None:
-            print "%14s:  " % "T_swing", "%.3f s" % T_swing
-            print "%14s:  " % "TTHS", "%.3f s" % self.swing_duration
-            print "%14s:  " % "swing_dT_min", "%.3f s" % self.swing_dT_min
-        print "%14s:  " % "T_total", "%.2f s" % T_total
-        print "%14s:  " % "CP error", self.cp_error
-        print "%14s:  " % "Comp. time", "%.1f ms" % (1000 * self.nlp.solve_time)
-        print "%14s:  " % "Iter. count", self.nlp.iter_count
-        print "%14s:  " % "Status", self.nlp.return_status
-        print "\n"
+            print("%14s:  " % "T_swing", "%.3f s" % T_swing)
+            print("%14s:  " % "TTHS", "%.3f s" % self.swing_duration)
+            print("%14s:  " % "swing_dT_min", "%.3f s" % self.swing_dT_min)
+        print("%14s:  " % "T_total", "%.2f s" % T_total)
+        print("%14s:  " % "CP error", self.cp_error)
+        print("%14s:  " % "Comp. time", "%.1f ms" % (
+            1000 * self.nlp.solve_time))
+        print("%14s:  " % "Iter. count", self.nlp.iter_count)
+        print("%14s:  " % "Status", self.nlp.return_status)
+        print("\n")
 
     def update_dT_max(self, dT_max):
         """
@@ -133,8 +135,10 @@ class NonlinearPredictiveController(pymanoid.Process):
         dT_max : scalar
             New maximum duration.
         """
-        for k in xrange(self.nb_steps):
-            dT_min = self.swing_dT_min if 2 * k < self.nb_steps else self.dT_min
+        for k in range(self.nb_steps):
+            dT_min = self.dT_min
+            if 2 * k < self.nb_steps:
+                dT_min = self.swing_dT_min
             self.nlp.update_variable_bounds('dT_%d' % k, [dT_min], [dT_max])
         self.dT_max = dT_max
 
@@ -150,7 +154,7 @@ class NonlinearPredictiveController(pymanoid.Process):
         dT_max = self.dT_max
         if dT_min < self.swing_dT_min:
             self.update_swing_dT_min(dT_min)
-        for k in xrange(self.nb_steps / 2, self.nb_steps):
+        for k in range(self.nb_steps / 2, self.nb_steps):
             self.nlp.update_variable_bounds('dT_%d' % k, [dT_min], [dT_max])
         self.dT_min = dT_min
 
@@ -164,7 +168,7 @@ class NonlinearPredictiveController(pymanoid.Process):
             New minimum duration. Only affects the swing phase.
         """
         dT_max = self.dT_max
-        for k in xrange(self.nb_steps / 2):
+        for k in range(self.nb_steps / 2):
             self.nlp.update_variable_bounds('dT_%d' % k, [dT_min], [dT_max])
         self.swing_dT_min = dT_min
 

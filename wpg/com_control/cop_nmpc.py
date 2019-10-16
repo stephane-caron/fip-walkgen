@@ -3,20 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of dynamic-walking
-# <https://github.com/stephane-caron/dynamic-walking>.
+# This file is part of fip-walking
+# <https://github.com/stephane-caron/fip-walking>.
 #
-# dynamic-walking is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+# fip-walking is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# dynamic-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walking is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
-# dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walking. If not, see <http://www.gnu.org/licenses/>.
 
 import casadi
 
@@ -73,7 +74,7 @@ class COPPredictiveController(NonlinearPredictiveController):
         T_swing = 0
         T_total = 0
 
-        for k in xrange(nb_steps):
+        for k in range(nb_steps):
             contact = contact_sequence[nb_contacts * k / nb_steps]
             u_k = self.nlp.new_variable(
                 'u_%d' % k, 3, init=[0, 0, 0], lb=self.u_min, ub=self.u_max)
@@ -171,7 +172,7 @@ class COPPredictiveController(NonlinearPredictiveController):
     def compute_Z(self, Alpha, Beta):
         Z = []
         contact_sequence = self.contact_sequence
-        for k in xrange(self.nb_steps):
+        for k in range(self.nb_steps):
             contact = contact_sequence[2 * k / self.nb_steps]
             z_k = contact.p + Alpha[k] * contact.X * contact.t + \
                 Beta[k] * contact.Y * contact.b

@@ -3,20 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of dynamic-walking
-# <https://github.com/stephane-caron/dynamic-walking>.
+# This file is part of fip-walking
+# <https://github.com/stephane-caron/fip-walking>.
 #
-# dynamic-walking is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+# fip-walking is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# dynamic-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walking is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
-# dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walking. If not, see <http://www.gnu.org/licenses/>.
 
 from numpy import array, asarray, bmat, cross, dot, eye, hstack, vstack, zeros
 
@@ -31,7 +32,8 @@ from preview import ZMPPreviewBuffer
 class COMTube(object):
 
     """
-    Primal tube of COM locations computed along with its dual acceleration cone.
+    Primal tube of COM locations computed along with its dual acceleration
+    cone.
 
     Parameters
     ----------
@@ -63,7 +65,8 @@ class COMTube(object):
         primal_vrep = [tube_start + s for s in cross_section] + \
             [tube_end + s for s in cross_section]
         primal_hrep = compute_polytope_hrep(primal_vrep)
-        dual_vrep = stance.compute_pendular_accel_cone(com_vertices=primal_vrep)
+        dual_vrep = stance.compute_pendular_accel_cone(
+            com_vertices=primal_vrep)
         dual_hrep = compute_polytope_hrep(dual_vrep)
         self.dual_hrep = dual_hrep
         self.dual_vrep = dual_vrep
@@ -124,7 +127,7 @@ class DoubleSupportController(object):
             preview = ZMPPreviewBuffer([stance])
             preview.update(P, V, Z, [dt] * nb_steps, omega2)
         except ValueError as e:
-            print "%s error:" % type(self).__name__, e
+            print("%s error:" % type(self).__name__, e)
             preview = None
         self.lmpc = lmpc
         self.preview = preview

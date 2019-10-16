@@ -3,20 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of dynamic-walking
-# <https://github.com/stephane-caron/dynamic-walking>.
+# This file is part of fip-walking
+# <https://github.com/stephane-caron/fip-walking>.
 #
-# dynamic-walking is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+# fip-walking is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# dynamic-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walking is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
-# dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walking. If not, see <http://www.gnu.org/licenses/>.
 
 import TOPP
 
@@ -34,9 +35,9 @@ from pymanoid.transformations import rotation_matrix_from_quat
 
 def interpolate_uab_hermite(p0, u0, p1, u1):
     """
-    Interpolate a Hermite path between :math:`p_0` and :math:`p_1` with tangents
-    parallel to :math:`u_0` and :math:`u_1`, respectively. The output path
-    `B(s)` minimizes a relaxation of the uniform acceleration bound:
+    Interpolate a Hermite path between :math:`p_0` and :math:`p_1` with
+    tangents parallel to :math:`u_0` and :math:`u_1`, respectively. The output
+    path `B(s)` minimizes a relaxation of the uniform acceleration bound:
 
     .. math::
 
@@ -108,7 +109,7 @@ def interpolate_uab_hermite_topp(p0, v0, p1, v1):
     poly = interpolate_uab_hermite(p0, v0, p1, v1)
     C0, C1, C2, C3 = poly.coeffs
     path_str = "%f\n%d" % (1., 3)
-    for k in xrange(3):
+    for k in range(3):
         path_str += "\n%f %f %f %f" % (C0[k], C1[k], C2[k], C3[k])
     return TOPP.Trajectory.PiecewisePolynomialTrajectory.FromString(path_str)
 
@@ -213,8 +214,8 @@ class SwingFootController(pymanoid.Process):
             raise Exception("TOPP error: %s" % TOPP.Errors.MESSAGES[rc])
         self.topp.ReparameterizeTrajectory(self.reparamstep)
         self.topp.WriteResultTrajectory()
-        s_str = self.topp.restrajectorystring
-        s_traj = TOPP.Trajectory.PiecewisePolynomialTrajectory.FromString(s_str)
+        rs = self.topp.restrajectorystring
+        s_traj = TOPP.Trajectory.PiecewisePolynomialTrajectory.FromString(rs)
         self.retimed_traj.update(self.path, s_traj)
 
     def update_target_pose(self, dt):

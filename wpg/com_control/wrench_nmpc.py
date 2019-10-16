@@ -3,20 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of dynamic-walking
-# <https://github.com/stephane-caron/dynamic-walking>.
+# This file is part of fip-walking
+# <https://github.com/stephane-caron/fip-walking>.
 #
-# dynamic-walking is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+# fip-walking is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# dynamic-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walking is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
-# dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walking. If not, see <http://www.gnu.org/licenses/>.
 
 import casadi
 import numpy
@@ -76,7 +77,7 @@ class WrenchPredictiveController(NonlinearPredictiveController):
         T_swing = 0
         T_total = 0
 
-        for k in xrange(nb_steps):
+        for k in range(nb_steps):
             contact = contact_sequence[nb_contacts * k / nb_steps]
             u_k = self.nlp.new_variable(
                 'u_%d' % k, 3, init=[0., 0., 0.], lb=self.u_min, ub=self.u_max)
@@ -166,8 +167,7 @@ class WrenchPredictiveController(NonlinearPredictiveController):
             self.update_swing_dT_min(self.swing_dT_min / 2)
         self.cp_error = cp_error
         if self.cp_error > 0.1:  # and not self.preview.is_empty:
-            print "Warning: preview not updated as CP error was", cp_error
-            # return
+            print("Warning: preview not updated as CP error was", cp_error)
         self.nlp.warm_start(X)
         self.preview.update(P, V, Z, dT, self.omega2)
         self.p_last = p_last
@@ -180,7 +180,7 @@ class WrenchPredictiveController(NonlinearPredictiveController):
     def compute_Z_and_Ld(self, P, L):
         Ld, Z = [], []
         contact_sequence = self.contact_sequence
-        for k in xrange(self.nb_steps):
+        for k in range(self.nb_steps):
             contact = contact_sequence[2 * k / self.nb_steps]
             w_k = numpy.dot(contact.wrench_span, L[k])
             f_k, tau_k = w_k[:3], w_k[3:]

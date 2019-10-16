@@ -3,20 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of dynamic-walking
-# <https://github.com/stephane-caron/dynamic-walking>.
+# This file is part of fip-walking
+# <https://github.com/stephane-caron/fip-walking>.
 #
-# dynamic-walking is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+# fip-walking is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# dynamic-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walking is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
-# dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walking. If not, see <http://www.gnu.org/licenses/>.
 
 from numpy import asarray, bmat, cosh, cross, dot, eye, hstack, sinh, sqrt
 from numpy import vstack, zeros
@@ -54,14 +55,14 @@ class FIPRegulator(object):
         C = [None] * nb_steps
         D = [None] * nb_steps
         e = [None] * nb_steps
-        for k in xrange(nb_steps):
+        for k in range(nb_steps):
             contact = contacts[k]
             force_inequalities = contact.force_inequalities
             C_fric = hstack([force_inequalities, fzeros])
             D_fric = -force_inequalities
             e_fric = dot(force_inequalities, GZ_ref[k])
             if not all(e_fric > -1e-10):
-                print "Warning: reference violates friction cone constraints"
+                print("Warning: reference violates friction cone constraints")
             C_cop = zeros((4, 6))
             D_cop = zeros((4, 3))
             e_cop = zeros(4)
@@ -73,7 +74,7 @@ class FIPRegulator(object):
                 D_cop[i, :] = normal  # * Delta_z
                 e_cop[i] = -dot(normal, GZ_ref[k])
             if not all(e_cop > -1e-10):
-                print "Warning: reference violates friction cone constraints"
+                print("Warning: reference violates friction cone constraints")
             C[k] = vstack([C_fric, C_cop])
             D[k] = vstack([D_fric, D_cop])
             e[k] = hstack([e_fric, e_cop])
@@ -98,7 +99,7 @@ class FIPRegulator(object):
                 self.Z_ref = Z_ref
                 self.contacts = contacts
         except ValueError as e:
-            print "%s error:" % type(self).__name__, e
+            print("%s error:" % type(self).__name__, e)
             preview = None
         self.lmpc = lmpc
         self.nb_steps = nb_steps
@@ -110,9 +111,9 @@ class FIPRegulator(object):
 
     @property
     def xprod_ratio(self):
-        """Used to test the validity of our assumption on neglecting Dz x Dp."""
+        """Used to test our assumption on neglecting Dz x Dp."""
         t = 0.
-        for k in xrange(self.nb_steps):
+        for k in range(self.nb_steps):
             contact = self.contacts[k]
             Delta_p = self.Delta_X[k, 0:3]
             Delta_z = self.Delta_Z[k]

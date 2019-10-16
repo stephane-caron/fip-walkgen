@@ -3,20 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of dynamic-walking
-# <https://github.com/stephane-caron/dynamic-walking>.
+# This file is part of fip-walking
+# <https://github.com/stephane-caron/fip-walking>.
 #
-# dynamic-walking is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+# fip-walking is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# dynamic-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walking is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
-# dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walking. If not, see <http://www.gnu.org/licenses/>.
 
 import pymanoid
 
@@ -256,7 +257,7 @@ class WalkingPatternGenerator(pymanoid.Process):
             self.com_ds = None
             self.update_com_lqr(sim)
         if self.last_mpc_success is None:
-            print "\033[1;33mWarning: won't move before MPC success\033[0;0m"
+            print("\033[1;33mWarning: won't move before MPC success\033[0;0m")
             return
         self.update_swing_foot(sim)
         self.last_mpc_success.forward(sim.dt)
@@ -319,7 +320,7 @@ class WalkingPatternGenerator(pymanoid.Process):
             if self.__draw_support_tube:
                 self.__ds_tube_handle = self.com_ds.tube.draw()
         except RuntimeError as e:  # this one is cdd...
-            print "%s error:" % type(self).__name__, e
+            print("%s error:" % type(self).__name__, e)
             self.preview = None
             self.tube = None
 
@@ -337,9 +338,7 @@ class WalkingPatternGenerator(pymanoid.Process):
                 zmp = self.com_ds.preview.get_zmp()
                 self.strat_counts['ds'] += 1
             else:  # go for the last-resort strategy
-                print "\033[1;33mWarning: sending emergency break!\033[0;0m"
-                # com = self.pendulum.com_state.p
-                # comd = self.pendulum.com_state.pd
+                print("\033[1;33mWarning: sending emergency break!\033[0;0m")
                 com = self.state_estimator.com
                 comd = self.state_estimator.comd
                 omega, omega2 = self.pendulum.omega, self.pendulum.omega2

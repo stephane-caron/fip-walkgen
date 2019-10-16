@@ -3,20 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of dynamic-walking
-# <https://github.com/stephane-caron/dynamic-walking>.
+# This file is part of fip-walking
+# <https://github.com/stephane-caron/fip-walking>.
 #
-# dynamic-walking is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+# fip-walking is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# dynamic-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walking is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
-# dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walking. If not, see <http://www.gnu.org/licenses/>.
 
 import casadi
 
@@ -75,7 +76,7 @@ class FIPPredictiveController(NonlinearPredictiveController):
         T_swing = 0
         T_total = 0
 
-        for k in xrange(nb_steps):
+        for k in range(nb_steps):
             contact = contact_sequence[nb_contacts * k / nb_steps]
             z_min = list(contact.p - [1, 1, 1])  # TODO: smarter
             z_max = list(contact.p + [1, 1, 1])
@@ -133,16 +134,11 @@ class FIPPredictiveController(NonlinearPredictiveController):
         cp_last = p_last + v_last / omega
         cp_last = end_com + end_comd / omega + gravity / omega2
         z_last = z_k
-        # last_contact = contact_sequence[-1]
-        # self.add_friction_constraint(last_contact, p_last, cp_last)
-        # self.add_linear_cop_constraints(last_contact, p_last, cp_last)
         self.nlp.add_equality_constraint(z_last, cp_last)
 
         p_diff = p_last - end_com
         v_diff = v_last - end_comd
         cp_diff = p_diff + v_diff / omega
-        # self.nlp.extend_cost(self.weights['pos'] * casadi.dot(p_diff, p_diff))
-        # self.nlp.extend_cost(self.weights['vel'] * casadi.dot(v_diff, v_diff))
         self.nlp.extend_cost(self.weights['cp'] * casadi.dot(cp_diff, cp_diff))
         self.nlp.extend_cost(self.weights['time'] * T_total)
         self.nlp.create_solver()
@@ -186,7 +182,7 @@ class FIPPredictiveController(NonlinearPredictiveController):
             self.update_swing_dT_min(self.swing_dT_min / 2)
         self.cp_error = cp_error
         if self.cp_error > 0.1:  # and not self.preview.is_empty:
-            print "Warning: preview not updated as CP error was", cp_error
+            print("Warning: preview not updated as CP error was", cp_error)
             return
         self.nlp.warm_start(X)  # save as initial guess for next iteration
         self.preview.update(P, V, Z, dT, self.omega2)

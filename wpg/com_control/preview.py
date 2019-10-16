@@ -3,20 +3,21 @@
 #
 # Copyright (C) 2015-2017 Stephane Caron <stephane.caron@normalesup.org>
 #
-# This file is part of dynamic-walking
-# <https://github.com/stephane-caron/dynamic-walking>.
+# This file is part of fip-walking
+# <https://github.com/stephane-caron/fip-walking>.
 #
-# dynamic-walking is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or (at your option) any
-# later version.
+# fip-walking is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# dynamic-walking is distributed in the hope that it will be useful, but WITHOUT
+# fip-walking is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
-# dynamic-walking. If not, see <http://www.gnu.org/licenses/>.
+# fip-walking. If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import sys
@@ -134,7 +135,7 @@ class ZMPPreviewBuffer(object):
             return
         self.cur_step += 1
         if self.cur_step >= self.nb_steps:
-            print "Warning: reached end of receding horizon"
+            print("Warning: reached end of receding horizon")
             return
         self.rem_dT = self.dT[self.cur_step]
 
@@ -162,7 +163,7 @@ class ZMPPreviewBuffer(object):
         output_timestep = self.rem_duration / nb_steps
         rem_dT = self.rem_dT
         omega2 = self.omega2
-        for _ in xrange(nb_steps):
+        for _ in range(nb_steps):
             X.append(hstack([com, comd, self.get_zmp(input_step)]))
             contacts.append(self.get_contact(input_step))
             time_to_fill = output_timestep
@@ -208,9 +209,10 @@ class ZMPPreviewBuffer(object):
                 draw_point(com, color='r', pointsize=0.05)]
             if wrench_drawer is not None:
                 try:
-                    wrench_drawer.recompute(self.get_contact(k), comdd, am=None)
+                    wrench_drawer.recompute(
+                        self.get_contact(k), comdd, am=None)
                 except ValueError:
-                    print "Warning: wrench validation failed at t = %.2f s" % t
+                    print("Warning: wrench validation failed at t=%.2f s" % t)
             dt = min(rem_time, sim.dt)
             com, comd = integrate_fip(com, comd, zmp, dt, omega2)
             if wrench_drawer is not None:
@@ -231,7 +233,7 @@ class ZMPPreviewBuffer(object):
             return handles
         com, comd = self.P[0], self.V[0]
         handles.append(draw_point(com, color, pointsize))
-        for k in xrange(self.nb_steps):
+        for k in range(self.nb_steps):
             com_prev = com
             dT = self.get_dT(k)
             omega2 = self.get_omega2(k)
